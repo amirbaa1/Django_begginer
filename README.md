@@ -1,6 +1,3 @@
-# Django_begginer
-
-
 # Django
 ## UserCreationForm
 *   about normal user:
@@ -196,4 +193,99 @@ def add_book(request):
 ```python
 path('library/add-book/', add_book),
 ```
+---
+## create usere
+```python
+python manage.py createsuperuser
+```
+----
+# Posts
+## model posts
+* create model in app name blog:
+```python
+from django.db import models
+
+
+class Posts(models.Model):
+    text = models.TextField()
+```
+* see text :
+```python
+    def __str__(self):
+        return self.text[:10]
+```
+* blog/viwe.py:
+
+```python
+from django.views.generic import ListView
+from .models import Posts
+
+
+class Postview(ListView):
+    model = Posts
+    template_name = 'index.html'
+    context_object_name = 'post_list' #new
+```
+
+* config/urls.py:
+
+```python
+path('blog/',include('blog.urls')), #new
+```
+ * blog/urls.py:
+
+ ```python
+    path('post/',Postview.as_view(),name = 'Posts'),
+ ```
+* see website urls
+```
+http://127.0.0.1:8000/blog/post/
+```
+---
+# blog for css and Images
+## start creat file and add setting
+* create startapp blog
+```python 
+#terminal 
+python manage.py startapp blog  
+```
+* create file static
+* config/setting.py:
+ ```python
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [str(BASE_DIR.joinpath('staticb'))] #new
+ ```
+ * create templates file.
+ * add adress file in setting.py:
+ ```python
+'DIRS': [str(BASE_DIR.joinpath('templates'))],
+ ```
+## create model
+```python
+class Post(models.Model):
+    title = models.CharField(max_length=200)
+    author = models.ForeignKey('auth.User',on_delete=models.CASCADE,)
+    body = models.TextField()
+    
+    def __str__(self):
+        return self.title
+```
+* اگر نویسند را حذف کنیم تمام ویژگی نوشته شده حذف شود
+```python
+    author = models.ForeignKey('auth.User',on_delete=models.CASCADE,)
+```
+* so run makemigration and migrate.
+* `view.py/blog`:
+* import listview for see list in admin:
+```python
+from django.views.generic import ListView
+from .models import Post
+
+
+class PostView(ListView):
+    model = Post
+    template_name = 'home.html'
+    context_object_name = 'post_list'
+```
+* add link `include` in `config/urls` and add `blog/urls`.
 ---
