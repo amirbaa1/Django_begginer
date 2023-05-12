@@ -12,6 +12,10 @@
 - [blog for css and Images](#blog-for-css-and-images)
     - [start-creat-file-and-add-setting](#start-creat-file-and-add-setting)
     - [Create model](#create-model)
+- [Form and create posts](#form-and-create-posts)
+    - [model](#create-model)
+    - [create view](#create-view)
+    - [create templates](#create-templates)
 
 ----
 ## UserCreationForm
@@ -303,4 +307,124 @@ class PostView(ListView):
     context_object_name = 'post_list'
 ```
 * add link `include` in `config/urls` and add `blog/urls`.
+---
+# form and create posts
+## create model
+* model.py 
+
+```python
+from django.db import models
+from django.urls import reverse #new
+
+
+class Post(models.Model):
+    title = models.CharField(max_length=200)
+    author = models.ForeignKey('auth.User', on_delete=models.CASCADE, )
+    body = models.TextField()
+
+    def __str__(self):
+        return self.title
+
+    def get_absolute_url(self): # if was error improperlyconfigured and add get_absolute_url
+        return reverse('post_detail', args=[str(self.id)])
+```
+* در تابع اخری برای گرفتن POST به GET بوده.
+## create view
+* view.py:
+* import model Post to view.py
+
+```python
+class PostView(ListView):
+    model = Post
+    template_name = 'home.html'
+    context_object_name = 'post_list'
+
+class PostDetail(DetailView): #new
+    model = Post
+    template_name = 'post_detail.html'
+    context_object_name = 'psot_detail'
+
+
+class PostCreate(CreateView): #new
+    model = Post
+    template_name = 'post_create.html'
+    fields = ['title','author','body']
+```
+## create templates
+* create fiel templates
+    * post_create
+    * home
+    * post_detail
+* for base.html:
+```html
+{% load static %}
+<head>
+    <title>Django blog</title>
+</head>
+<h1>
+    <a href="{% url 'home' %}">Django blog</a>
+</h1>
+<div class="nav-right">
+    <a href="{% url 'post_create' %}">+ new post</a>
+</div>
+
+{% block content %}
+{% endblock content %}
+
+```
+* home.html:
+```html
+{% extends 'base.html' %}
+{% block content %}
+{% for post in post_list %}
+<div class="post-entry">
+    <h2>
+        <a href="{% url 'post_detail' post.pk %}">{{ post.title }}
+    </a>
+    </h2>
+    <p>{{ post.body }}</p>
+</div>
+{% endfor %}
+{% endblock content %}
+```
+* post_create.html:
+
+```html 
+{% extends 'base.html' %}
+{% block content %}
+    <form action="" method="post">{% csrf_token %}
+      {{ form.as_p }}
+        <input type="submit" value="Save">
+    </form>
+
+{% endblock content %}
+```
+* if it gives the `ImporelyConfigured` erorr ,must add the `get_absolute_url` in `model.py`:
+
+```python 
+    def get_absolute_url(self):
+        return reverse('post_detail', args=[str(self.id)])
+```
+* urls link pk for `get_absolute_url` in `blog/urls.py`:
+```python 
+path('post/<int:pk>/', PostDetail.as_view(),name='post_detail'),
+```
+* name = `post_detail` az view.py tabe `PostDetail`
+
+```html
+{% block content %}
+    <div class="post-entry">
+    <h2>{{ post_detail.title }}</h2>
+    <p>{{ post_detail.body }}</p> </div>
+{% endblock content %}
+```
+* mitonim link bedim ke safe kamel baz beshe.
+```html
+{% block content %}
+{% for post in object_list %} <div class="post-entry">
+<h2><a href="{% url 'post_detail' post.pk %}">{{ post.title }}</a></h2>
+<p>{{ post.body }}</p> </div>
+  {% endfor %}
+{% endblock content %}
+```
 ---
