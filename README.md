@@ -1,22 +1,25 @@
 # Django
 ##
-- [UserCreationForm](#usercreationform)
-- [Login](#login)
-- [Logout](#logout)
-- [Change Password](#change-password)
+- [Django](#django)
+  - [](#)
+  - [UserCreationForm](#usercreationform)
+  - [login](#login)
+  - [change password :](#change-password-)
+  - [logout](#logout)
 - [Authentication](#authentication)
-    - [Permission](#permission)
-    - [Create Usere](#createusere)
+  - [permission](#permission)
+  - [create usere](#create-usere)
 - [Posts](#posts)
-    - [Model Posts](#model-posts)
+  - [model posts](#model-posts)
 - [blog for css and Images](#blog-for-css-and-images)
-    - [start-creat-file-and-add-setting](#start-creat-file-and-add-setting)
-    - [Create model](#create-model)
-- [Form and create posts](#form-and-create-posts)
-    - [model](#create-model)
-    - [create view](#create-view)
-    - [create templates](#create-templates)
-
+  - [start creat file and add setting](#start-creat-file-and-add-setting)
+  - [create model](#create-model)
+- [form and create posts](#form-and-create-posts)
+  - [create model](#create-model-1)
+  - [create view](#create-view)
+  - [create templates](#create-templates)
+- [Test](#test)
+  - [coverage TEST](#coverage-test)
 ----
 ## UserCreationForm
 *   about normal user:
@@ -428,3 +431,26 @@ path('post/<int:pk>/', PostDetail.as_view(),name='post_detail'),
 {% endblock content %}
 ```
 ---
+# Test
+
+## coverage TEST
+
+```CMD
+coverage run --source='.' manage.py test app_name
+```
+or
+```CMD
+coverage run --source='.\app_name' manage.py test app_name
+```
+
+* run TEST in the CMD or terminal vscode or pycharm:
+
+```CMD
+coverage report
+```
+
+* or see in html and just only open the file : `htmlcov/index.html`
+
+```CMD
+coverage html
+```
